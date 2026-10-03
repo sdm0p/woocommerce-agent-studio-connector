@@ -5,6 +5,8 @@ Validated on Windows on **3 October 2026**. This record distinguishes simulator 
 | Check | Result |
 | --- | --- |
 | Automated client/config/MCP tests | 60 passed on Python 3.12.2 and Python 3.14.4 |
+| GitHub Actions | All four Windows/Ubuntu × Python 3.12/3.14 jobs passed, including tests and both transport demos ([verified run](https://github.com/sdm0p/woocommerce-agent-studio-connector/actions/runs/37133935601)) |
+| Fresh public GitHub clone | 60 tests and both transport demos passed; no local credential files; shell line endings preserved |
 | Docker Compose configuration and provisioning | Passed; Docker Engine 29.5.3 on Windows Docker Desktop |
 | Original extracted source package | 60 tests and both transport demos passed; no local credential files or API-key literals |
 | Real MCP stdio initialization, tool discovery, and calls | Passed against fictional WooCommerce API simulator |
