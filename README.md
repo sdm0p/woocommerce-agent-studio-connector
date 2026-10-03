@@ -117,18 +117,6 @@ For remote access, use an HTTPS reverse proxy forwarding to this loopback server
 
 See [CAPABILITIES.md](CAPABILITIES.md), [ARCHITECTURE.md](ARCHITECTURE.md), and [VALIDATION.md](VALIDATION.md) for behavior, failure handling, and exactly what was tested.
 
-## Submission
-
-Submit the public repository link: [sdm0p/woocommerce-agent-studio-connector](https://github.com/sdm0p/woocommerce-agent-studio-connector). Setup instructions, tool schemas, tests, and sanitized validation evidence are included. Credentials and local data volumes are excluded from Git.
-
-An optional source ZIP can also be created with an allowlist that excludes `.env`, generated credentials, environments, caches, and container data:
-
-```powershell
-.\.venv\Scripts\python.exe -m scripts.package
-```
-
-It writes `woocommerce-connector-submission.zip` beside this folder.
-
 ## References
 
 - [WooCommerce API-key authentication](https://developer.woocommerce.com/docs/apis/rest-api/authentication/)
