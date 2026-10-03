@@ -1,0 +1,61 @@
+name: wc-connector-lab
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Run bootstrap.py first}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Run bootstrap.py first}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  wordpress:
+    image: wordpress:6.8.3-php8.3-apache
+    environment: &wp_environment
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+          $$_SERVER['HTTPS'] = 'on';
+        }
+    volumes:
+      - wp_data:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+  proxy:
+    image: caddy:2.10.2-alpine
+    ports:
+      - "127.0.0.1:8443:8443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - wordpress
+  wpcli:
+    image: wordpress:cli-2.12.0-php8.3
+    user: "33:33"
+    working_dir: /var/www/html
+    entrypoint: ["sh"]
+    environment:
+      <<: *wp_environment
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+    volumes:
+      - wp_data:/var/www/html
+      - ./bootstrap:/bootstrap:ro
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  db_data:
+  wp_data:
+  caddy_data:
+  caddy_config:

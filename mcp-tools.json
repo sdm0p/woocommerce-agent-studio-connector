@@ -1,0 +1,681 @@
+{
+  "name": "woocommerce-readonly-orders",
+  "transports": [
+    "stdio",
+    "streamable-http"
+  ],
+  "tools": [
+    {
+      "name": "list_orders",
+      "description": "Browse orders one page at a time. Follow next_page to read all pages; no edits are possible.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "default": 1,
+            "exclusiveMinimum": 0,
+            "title": "Page",
+            "type": "integer"
+          },
+          "per_page": {
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Per Page",
+            "type": "integer"
+          }
+        },
+        "title": "list_ordersArguments",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$defs": {
+          "LineItem": {
+            "properties": {
+              "product_id": {
+                "title": "Product Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "Quantity",
+                "type": "integer"
+              },
+              "subtotal": {
+                "title": "Subtotal",
+                "type": "string"
+              },
+              "total": {
+                "title": "Total",
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id",
+              "name",
+              "quantity",
+              "subtotal",
+              "total"
+            ],
+            "title": "LineItem",
+            "type": "object"
+          },
+          "OrderSummary": {
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "customer_id": {
+                "title": "Customer Id",
+                "type": "integer"
+              },
+              "status": {
+                "title": "Status",
+                "type": "string"
+              },
+              "date_created": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Created"
+              },
+              "date_modified": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Modified"
+              },
+              "date_created_gmt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Created Gmt"
+              },
+              "date_modified_gmt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Modified Gmt"
+              },
+              "currency": {
+                "title": "Currency",
+                "type": "string"
+              },
+              "total": {
+                "title": "Total",
+                "type": "string"
+              },
+              "total_tax": {
+                "title": "Total Tax",
+                "type": "string"
+              },
+              "shipping_total": {
+                "title": "Shipping Total",
+                "type": "string"
+              },
+              "discount_total": {
+                "title": "Discount Total",
+                "type": "string"
+              },
+              "line_items": {
+                "items": {
+                  "$ref": "#/$defs/LineItem"
+                },
+                "title": "Line Items",
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "customer_id",
+              "status",
+              "currency",
+              "total",
+              "total_tax",
+              "shipping_total",
+              "discount_total",
+              "line_items"
+            ],
+            "title": "OrderSummary",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "orders": {
+            "items": {
+              "$ref": "#/$defs/OrderSummary"
+            },
+            "title": "Orders",
+            "type": "array"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "per_page": {
+            "title": "Per Page",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "total_pages": {
+            "title": "Total Pages",
+            "type": "integer"
+          },
+          "next_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Page"
+          }
+        },
+        "required": [
+          "orders",
+          "page",
+          "per_page",
+          "total",
+          "total_pages",
+          "next_page"
+        ],
+        "title": "OrderPage",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_order",
+      "description": "Read one order by its numeric WooCommerce order ID; returns a limited order summary.",
+      "inputSchema": {
+        "properties": {
+          "order_id": {
+            "exclusiveMinimum": 0,
+            "title": "Order Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "order_id"
+        ],
+        "title": "get_orderArguments",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$defs": {
+          "LineItem": {
+            "properties": {
+              "product_id": {
+                "title": "Product Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "Quantity",
+                "type": "integer"
+              },
+              "subtotal": {
+                "title": "Subtotal",
+                "type": "string"
+              },
+              "total": {
+                "title": "Total",
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id",
+              "name",
+              "quantity",
+              "subtotal",
+              "total"
+            ],
+            "title": "LineItem",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "customer_id": {
+            "title": "Customer Id",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "date_created": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Date Created"
+          },
+          "date_modified": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Date Modified"
+          },
+          "date_created_gmt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Date Created Gmt"
+          },
+          "date_modified_gmt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Date Modified Gmt"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "total": {
+            "title": "Total",
+            "type": "string"
+          },
+          "total_tax": {
+            "title": "Total Tax",
+            "type": "string"
+          },
+          "shipping_total": {
+            "title": "Shipping Total",
+            "type": "string"
+          },
+          "discount_total": {
+            "title": "Discount Total",
+            "type": "string"
+          },
+          "line_items": {
+            "items": {
+              "$ref": "#/$defs/LineItem"
+            },
+            "title": "Line Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "customer_id",
+          "status",
+          "currency",
+          "total",
+          "total_tax",
+          "shipping_total",
+          "discount_total",
+          "line_items"
+        ],
+        "title": "OrderSummary",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "search_orders",
+      "description": "Find orders using combined filters (AND). Supply at least one filter. customer_id is a registered customer ID, not a name/email; guest ID 0 cannot be filtered. query uses native WooCommerce text search, not exact customer lookup. Dates require ISO8601 with timezone and are normalized to UTC.",
+      "inputSchema": {
+        "properties": {
+          "customer_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Customer Id"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "pending",
+                  "processing",
+                  "on-hold",
+                  "completed",
+                  "cancelled",
+                  "refunded",
+                  "failed",
+                  "trash",
+                  "any"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Query"
+          },
+          "after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Before"
+          },
+          "page": {
+            "default": 1,
+            "exclusiveMinimum": 0,
+            "title": "Page",
+            "type": "integer"
+          },
+          "per_page": {
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Per Page",
+            "type": "integer"
+          }
+        },
+        "title": "search_ordersArguments",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$defs": {
+          "LineItem": {
+            "properties": {
+              "product_id": {
+                "title": "Product Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "quantity": {
+                "title": "Quantity",
+                "type": "integer"
+              },
+              "subtotal": {
+                "title": "Subtotal",
+                "type": "string"
+              },
+              "total": {
+                "title": "Total",
+                "type": "string"
+              }
+            },
+            "required": [
+              "product_id",
+              "name",
+              "quantity",
+              "subtotal",
+              "total"
+            ],
+            "title": "LineItem",
+            "type": "object"
+          },
+          "OrderSummary": {
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "customer_id": {
+                "title": "Customer Id",
+                "type": "integer"
+              },
+              "status": {
+                "title": "Status",
+                "type": "string"
+              },
+              "date_created": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Created"
+              },
+              "date_modified": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Modified"
+              },
+              "date_created_gmt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Created Gmt"
+              },
+              "date_modified_gmt": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Date Modified Gmt"
+              },
+              "currency": {
+                "title": "Currency",
+                "type": "string"
+              },
+              "total": {
+                "title": "Total",
+                "type": "string"
+              },
+              "total_tax": {
+                "title": "Total Tax",
+                "type": "string"
+              },
+              "shipping_total": {
+                "title": "Shipping Total",
+                "type": "string"
+              },
+              "discount_total": {
+                "title": "Discount Total",
+                "type": "string"
+              },
+              "line_items": {
+                "items": {
+                  "$ref": "#/$defs/LineItem"
+                },
+                "title": "Line Items",
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "customer_id",
+              "status",
+              "currency",
+              "total",
+              "total_tax",
+              "shipping_total",
+              "discount_total",
+              "line_items"
+            ],
+            "title": "OrderSummary",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "orders": {
+            "items": {
+              "$ref": "#/$defs/OrderSummary"
+            },
+            "title": "Orders",
+            "type": "array"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "per_page": {
+            "title": "Per Page",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "total_pages": {
+            "title": "Total Pages",
+            "type": "integer"
+          },
+          "next_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Page"
+          }
+        },
+        "required": [
+          "orders",
+          "page",
+          "per_page",
+          "total",
+          "total_pages",
+          "next_page"
+        ],
+        "title": "OrderPage",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    }
+  ]
+}

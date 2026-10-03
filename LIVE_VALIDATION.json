@@ -1,0 +1,40 @@
+{
+  "backend": "Real WooCommerce 10.2.2 / WordPress 6.8.3 local Docker lab",
+  "data": "10 fictional orders; locally generated credentials excluded",
+  "tls_certificate_verified": true,
+  "stdio": {
+    "tool_names": [
+      "list_orders",
+      "get_order",
+      "search_orders"
+    ],
+    "list_total": 10,
+    "first_order_id": 11,
+    "search_matches": 1,
+    "invalid_search_rejected": true,
+    "missing_order_rejected": true,
+    "spec_matches_runtime": true
+  },
+  "http": {
+    "tool_names": [
+      "list_orders",
+      "get_order",
+      "search_orders"
+    ],
+    "list_total": 10,
+    "first_order_id": 11,
+    "search_matches": 1,
+    "invalid_search_rejected": true,
+    "missing_order_rejected": true,
+    "spec_matches_runtime": true
+  },
+  "all_pages_read": true,
+  "distinct_orders": 10,
+  "date_filter_matches": 10,
+  "native_order_id_search_passed": true,
+  "empty_search_passed": true,
+  "sensitive_fields_excluded": true,
+  "invalid_store_credentials_status": 401,
+  "read_key_write_rejected_status": 401,
+  "missing_and_wrong_http_tokens_rejected": true
+}

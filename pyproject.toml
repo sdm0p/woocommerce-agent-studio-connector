@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "woocommerce-readonly-mcp"
+version = "1.0.0"
+description = "Single-merchant read-only WooCommerce order connector for MCP agents"
+requires-python = ">=3.12"
+dependencies = ["mcp==1.30.0", "httpx==0.28.1", "uvicorn==0.54.0", "python-dotenv==1.2.4", "jsonschema==4.26.0"]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1", "pytest-asyncio==1.4.0"]
+
+[project.scripts]
+wc-mcp = "wc_connector.server:main"
+
+[tool.setuptools.packages.find]
+include = ["wc_connector*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
